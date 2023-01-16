@@ -184,3 +184,13 @@ STATIC_ROOT = os.path.join(BASE_DIR.parent, "static")
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+POCHITA_USERNAME = os.environ["POCHITA_USERNAME"]
+POCHITA_PASSWORD = os.environ["POCHITA_PASSWORD"]
+POCHITA_BASE_URL = os.environ["POCHITA_BASE_URL"]
+
+
+TWILIO_ACCOUNT_SID = os.environ["TWILIO_ACCOUNT_SID"]
+TWILIO_AUTH_TOKEN = os.environ["TWILIO_AUTH_TOKEN"]
+TWILIO_NOREPLY_NUMBER = os.environ["TWILIO_NOREPLY_NUMBER"]

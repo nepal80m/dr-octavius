@@ -7,16 +7,20 @@ from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import AllowAny
+from django.conf import settings
+from django.http import Http404
+from core.models import CoreConfig
 
 User = get_user_model()
 
 
-def fetch_all_documents(NIN):
-    headers = {
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFzaW1uZXBhbCIsImlkIjoiNjNjMmQ0YjhlODlhOTU3MGFkMDMxZWU4IiwiaWF0IjoxNjczNzEyODI1fQ.ttXWpdGdJovelBMLWhbNnNRUE8vrXVZlBNL1_bV7bHk"
-    }
-    nid_url = f"http://localhost:3000/nid/{NIN}"
+def fetch_all_documents(NIN, token):
 
+    nid_url = settings.POCHITA_BASE_URL + f"nid/{NIN}/"
+
+    headers = {
+        "Authorization": f"Bearer {token}",
+    }
     nid_result = requests.get(nid_url, headers=headers)
     nid_status_code = nid_result.status_code
     nid = nid_result.json()
@@ -35,7 +39,29 @@ class GetDocumentsView(APIView):
     def get(self, request, *args, **kwargs):
         user = request.user
         NIN = user.username
-        documents = fetch_all_documents(NIN)
+
+        # Getting the Pochita token from the database
+        try:
+            pochita_token_config = get_object_or_404(
+                CoreConfig, app="core", key="pochita_token"
+            )
+            token = pochita_token_config.key
+        except Http404:
+            print("Pochita token was not found.")
+            return Response(
+                {"message": "Something went wrong."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        try:
+            documents = fetch_all_documents(NIN, token)
+        except Exception as e:
+            print(e)
+            print("Couldn't fetch the documents")
+            return Response(
+                {"message": "Something went wrong."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
         return Response(
             {
                 "NIN": user.username,
@@ -58,12 +84,22 @@ class CheckNINView(APIView):
 
     def get(self, request, NIN, *args, **kwargs):
         # user = get_object_or_404(User, username=NIN)
-        headers = {
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFzaW1uZXBhbCIsImlkIjoiNjNjMmQ0YjhlODlhOTU3MGFkMDMxZWU4IiwiaWF0IjoxNjczNzEyODI1fQ.ttXWpdGdJovelBMLWhbNnNRUE8vrXVZlBNL1_bV7bHk"
-        }
+        # Getting the Pochita token from the database
+        try:
+            pochita_token_config = get_object_or_404(
+                CoreConfig, app="core", key="pochita_token"
+            )
+            token = pochita_token_config.key
+        except Http404:
+            print("Pochita token was not found.")
+            return Response(
+                {"message": "Something went wrong."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        headers = {"Authorization": f"Bearer {token}"}
         # response = {"NIN": user.username, "documents": []}
 
-        nid_url = f"http://localhost:3000/nid/check/{NIN}"
+        nid_url = settings.POCHITA_BASE_URL + f"nid/check/{NIN}"
 
         result = requests.get(nid_url, headers=headers)
         status_code = result.status_code

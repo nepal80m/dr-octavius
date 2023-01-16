@@ -9,8 +9,12 @@ from autho.serializers import (
     OTPAuthSerializer,
     TokenResponseSerializer,
 )
+from core.models import CoreConfig
 from autho.models import OTPToken
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from django.conf import settings
+from django.shortcuts import get_object_or_404
+from django.http import Http404
 
 # from rest_framework import viewsets
 # from django.contrib.auth import get_user_model
@@ -50,23 +54,18 @@ def send_sms_with_otp(mobile_number, otp):
     """
 
     print(f"Sending OTP to {mobile_number} via Twilio: {otp}")
-    return True
+    # return True
 
     try:
         # if api_settings.PASSWORDLESS_MOBILE_NOREPLY_NUMBER:
         #     # We need a sending number to send properly
 
         from twilio.rest import Client
-        from twilio_auth import (
-            TWILIO_ACCOUNT_SID,
-            TWILIO_AUTH_TOKEN,
-            MOBILE_NOREPLY_NUMBER,
-        )
 
-        twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+        twilio_client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
         twilio_client.messages.create(
             body=f"This is your login OTP for Parichaya App: {otp}.",
-            from_=MOBILE_NOREPLY_NUMBER,
+            from_=settings.TWILIO_NOREPLY_NUMBER,
             to=mobile_number,
         )
         return True
@@ -90,11 +89,25 @@ class GenerateOTPView(APIView):
             NIN = serializer.validated_data["NIN"]
             mobile_number = serializer.validated_data["mobile_number"]
 
-            # ?: Make query to the blockchain to check if the NIN is valid.
-            url = f"http://localhost:3000/nid/{NIN}"
+            # Make query to the blockchain to check if the NIN is valid.
+            url = settings.POCHITA_BASE_URL + f"nid/{NIN}/"
+            # Getting the Pochita token from the database
+            try:
+                pochita_token_config = get_object_or_404(
+                    CoreConfig, app="core", key="pochita_token"
+                )
+            except Http404:
+                print("Pochita token was not found")
+                return Response(
+                    {"message": "Something went wrong."},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
+            token = pochita_token_config.key
             headers = {
-                "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFzaW1uZXBhbCIsImlkIjoiNjNjMmQ0YjhlODlhOTU3MGFkMDMxZWU4IiwiaWF0IjoxNjczNzEyODI1fQ.ttXWpdGdJovelBMLWhbNnNRUE8vrXVZlBNL1_bV7bHk"
+                "Authorization": f"Bearer {token}",
             }
+
+            # Getting the NIN details from the blockchain
             try:
 
                 response = requests.get(url, headers=headers)
@@ -108,8 +121,9 @@ class GenerateOTPView(APIView):
                         status=status.HTTP_400_BAD_REQUEST,
                     )
             except Exception as e:
+                print(e)
                 return Response(
-                    {"message": "Invalid NIN."},
+                    {"message": "Something went wrong NIN."},
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
 

@@ -8,35 +8,6 @@ from autho.models import OTPToken
 User = get_user_model()
 
 
-# class UserAdmin(BaseUserAdmin):
-#     list_display = ("id", "name", "phone", "address", "otp", "logged", "count")
-#     list_filter = ("staff", "active", "admin", "doctor", "user")
-#     fieldsets = (
-#         (None, {"fields": ("phone", "password")}),
-#         (
-#             "Personal info",
-#             {
-#                 "fields": (
-#                     "name",
-#                     "address",
-#                 )
-#             },
-#         ),
-#         ("Permissions", {"fields": ("admin", "staff", "active", "doctor", "user")}),
-#     )
-#     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
-#     # overrides get_fieldsets to use this attribute when creating a user.
-#     add_fieldsets = ((None, {"classes": ("wide",), "fields": ("phone", "otp")}),)
-#     search_fields = ("phone", "name")
-#     ordering = ("phone", "name")
-#     filter_horizontal = ()
-
-#     def get_inline_instances(self, request, obj=None):
-#         if not obj:
-#             return list()
-#         return super(UserAdmin, self).get_inline_instances(request, obj)
-
-
 # admin.site.register(User, UserAdmin)
 
 

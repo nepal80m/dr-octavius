@@ -8,7 +8,7 @@ from django.contrib.auth.models import AbstractUser
 
 from django.utils.translation import gettext_lazy as _
 from core.models import TimeStampedModel
-from .managers import UserManager
+from autho.managers import UserManager
 from phonenumber_field.modelfields import PhoneNumberField
 from django.utils.crypto import get_random_string
 
