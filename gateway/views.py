@@ -45,7 +45,7 @@ class GetDocumentsView(APIView):
             pochita_token_config = get_object_or_404(
                 CoreConfig, app="core", key="pochita_token"
             )
-            token = pochita_token_config.key
+            token = pochita_token_config.value
         except Http404:
             print("Pochita token was not found.")
             return Response(
@@ -89,7 +89,7 @@ class CheckNINView(APIView):
             pochita_token_config = get_object_or_404(
                 CoreConfig, app="core", key="pochita_token"
             )
-            token = pochita_token_config.key
+            token = pochita_token_config.value
         except Http404:
             print("Pochita token was not found.")
             return Response(
@@ -104,7 +104,7 @@ class CheckNINView(APIView):
         result = requests.get(nid_url, headers=headers)
         status_code = result.status_code
         print(status_code)
-        if status_code is not 200:
+        if status_code != 200:
             return Response(
                 {
                     "NIN": NIN,

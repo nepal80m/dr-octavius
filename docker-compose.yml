@@ -21,13 +21,14 @@ services:
       - .:/octavius/src
     ports:
       - "${EXPOSE_PORT:-8000}:8000"
-    hostname: octavius
+    hostname: localhost
     env_file:
       - .env
     depends_on:
       - db
-    links:
-      - db:db
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     restart: always
 
 volumes:

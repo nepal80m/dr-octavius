@@ -4,6 +4,7 @@ import requests
 from django.core.management.base import BaseCommand
 from core.models import CoreConfig
 from django.conf import settings
+import json
 
 BASE_URL = settings.POCHITA_BASE_URL
 USERNAME = settings.POCHITA_USERNAME
@@ -15,13 +16,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            res = requests.post(
-                BASE_URL + "users/login/",
-                data={
-                    "username": USERNAME,
-                    "password": PASSWORD,
-                },
-            )
+            url = BASE_URL + "users/login/"
+            payload = json.dumps({"username": "asimnepal", "password": "asimnepal"})
+            headers = {"Content-Type": "application/json"}
+            res = requests.post(url, headers=headers, data=payload, timeout=10)
             result = res.json()
             token = result["token"]
         except Exception as e:

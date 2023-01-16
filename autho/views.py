@@ -54,6 +54,7 @@ def send_sms_with_otp(mobile_number, otp):
     """
 
     print(f"Sending OTP to {mobile_number} via Twilio: {otp}")
+    print(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
     # return True
 
     try:
@@ -102,7 +103,7 @@ class GenerateOTPView(APIView):
                     {"message": "Something went wrong."},
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
-            token = pochita_token_config.key
+            token = pochita_token_config.value
             headers = {
                 "Authorization": f"Bearer {token}",
             }
@@ -123,7 +124,7 @@ class GenerateOTPView(APIView):
             except Exception as e:
                 print(e)
                 return Response(
-                    {"message": "Something went wrong NIN."},
+                    {"message": "Something went wrong."},
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
 
