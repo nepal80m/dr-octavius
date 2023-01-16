@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -26,8 +27,9 @@ SECRET_KEY = "django-insecure-xjx=#k%(#t7ua&c+py3=!1c-h&*@8l3@cw$v(gifr^q_zrcun1
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+TRUSTED_ORIGINS = os.environ.get("TRUSTED_ORIGINS").split("|")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = TRUSTED_ORIGINS
 
 
 # Application definition
@@ -51,6 +53,8 @@ INSTALLED_APPS = (
     [
         "daphne",
         "channels",
+    ]
+    + [
         "django.contrib.admin",
         "django.contrib.auth",
         "django.contrib.contenttypes",
@@ -64,6 +68,7 @@ INSTALLED_APPS = (
         "phonenumber_field",
     ]
     + [
+        "core",
         "autho",
         "gateway",
         "scan_to_share",
@@ -111,12 +116,31 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+
+PG_DB = os.environ.get("POSTGRES_DB")
+PG_USER = os.environ.get("POSTGRES_USER")
+PG_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
+PG_HOST = os.environ.get("POSTGRES_HOST")
+PG_PORT = os.environ.get("POSTGRES_PORT")
+
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": PG_DB,
+        "USER": PG_USER,
+        "PASSWORD": PG_PASSWORD,
+        "HOST": PG_HOST,
+        "PORT": PG_PORT,
     }
 }
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
 
 
 # Password validation
@@ -154,6 +178,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR.parent, "static")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

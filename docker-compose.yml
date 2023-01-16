@@ -1,0 +1,34 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres
+    container_name: octavius-db
+    volumes:
+      - postgres_db_volume:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    hostname: octavius
+    restart: always
+
+  web:
+    build: .
+    command: sh docker_init.sh
+    container_name: octavius-web
+    volumes:
+      - .:/octavius/src
+    ports:
+      - "${EXPOSE_PORT:-8000}:8000"
+    hostname: octavius
+    env_file:
+      - .env
+    depends_on:
+      - db
+    links:
+      - db:db
+    restart: always
+
+volumes:
+  postgres_db_volume:
