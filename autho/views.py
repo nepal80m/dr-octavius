@@ -55,7 +55,7 @@ def send_sms_with_otp(mobile_number, otp):
 
     print(f"Sending OTP to {mobile_number} via Twilio: {otp}")
     print(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-    # return True
+    return True
 
     try:
         # if api_settings.PASSWORDLESS_MOBILE_NOREPLY_NUMBER:
