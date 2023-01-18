@@ -122,13 +122,14 @@ class OTPAuthSerializer(serializers.Serializer):
         max_length=15,
     )
     otp = serializers.CharField(
-        min_length=6, max_length=6, validators=[otp_age_validator]
+        min_length=4, max_length=4, validators=[otp_age_validator]
     )
 
     def validate(self, data):
         username = data.get("NIN")
         mobile_number = data.get("mobile_number")
         opt = data.get("otp")
+        print(f"Received OTP: {opt} to verify {username} and {mobile_number}")
         try:
             user = User.objects.get(username=username, mobile_number=mobile_number)
         except User.DoesNotExist:

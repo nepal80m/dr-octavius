@@ -54,7 +54,7 @@ def generate_numeric_token():
     Generate a random 6 digit string of numbers.
     We use this formatting to allow leading 0s.
     """
-    return get_random_string(length=6, allowed_chars=string.digits)
+    return get_random_string(length=4, allowed_chars=string.digits)
 
 
 class OTPTokenManager(models.Manager):
@@ -68,7 +68,7 @@ class OTPTokenManager(models.Manager):
 class OTPToken(TimeStampedModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     is_active = models.BooleanField(default=True)
-    otp = models.CharField(max_length=6, default=generate_numeric_token)
+    otp = models.CharField(max_length=4, default=generate_numeric_token)
 
     objects = OTPTokenManager()
 

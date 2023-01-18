@@ -14,7 +14,19 @@ from core.models import CoreConfig
 User = get_user_model()
 
 
-def fetch_all_documents(NIN, token):
+def fetch_all_documents(NIN):
+
+    try:
+        pochita_token_config = get_object_or_404(
+            CoreConfig, app="core", key="pochita_token"
+        )
+        token = pochita_token_config.value
+    except Http404:
+        print("Pochita token was not found.")
+        return Response(
+            {"message": "Something went wrong."},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
     nid_url = settings.POCHITA_BASE_URL + f"nid/{NIN}/"
 
@@ -41,19 +53,9 @@ class GetDocumentsView(APIView):
         NIN = user.username
 
         # Getting the Pochita token from the database
+
         try:
-            pochita_token_config = get_object_or_404(
-                CoreConfig, app="core", key="pochita_token"
-            )
-            token = pochita_token_config.value
-        except Http404:
-            print("Pochita token was not found.")
-            return Response(
-                {"message": "Something went wrong."},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
-        try:
-            documents = fetch_all_documents(NIN, token)
+            documents = fetch_all_documents(NIN)
         except Exception as e:
             print(e)
             print("Couldn't fetch the documents")
