@@ -53,6 +53,7 @@ INSTALLED_APPS = (
     [
         "daphne",
         "channels",
+        "corsheaders",
     ]
     + [
         "django.contrib.admin",
@@ -75,6 +76,9 @@ INSTALLED_APPS = (
     ]
 )
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3004",
+]
 ASGI_APPLICATION = "config.asgi.application"
 CHANNEL_LAYERS = {
     "default": {
@@ -84,6 +88,7 @@ CHANNEL_LAYERS = {
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",

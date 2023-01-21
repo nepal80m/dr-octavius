@@ -6,8 +6,8 @@ services:
     container_name: octavius-db
     volumes:
       - postgres_db_volume:/var/lib/postgresql/data/
-    ports:
-      - "5432:5432"
+      # ports:
+      # - "5433:5432"
     env_file:
       - .env
     hostname: octavius

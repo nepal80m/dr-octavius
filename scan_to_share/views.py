@@ -30,6 +30,8 @@ class ScanRequestDetailView(RetrieveAPIView):
 class ScanRequestApprovalView(APIView):
     def post(self, request, *args, **kwargs):
         user = request.user
+        print(f"Received approval request from {user.username}")
+
         serializer = ScanRequestApproveSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
@@ -58,9 +60,8 @@ class ScanRequestApprovalView(APIView):
             request_id,
             {
                 "type": "request_approval",
-                "message": "Your request is approved",
                 "status": is_approved,
-                "c": approved_data,
+                "data": approved_data,
             },
         )
 

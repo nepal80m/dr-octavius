@@ -19,8 +19,8 @@ class ScanRequestConsumer(WebsocketConsumer):
         self.send(
             text_data=json.dumps(
                 {
-                    "type": "websocket.accept",
-                    "room": self.room_group_name,
+                    "type": "connection.accepted",
+                    "request_id": self.room_group_name,
                 }
             )
         )
@@ -37,10 +37,28 @@ class ScanRequestConsumer(WebsocketConsumer):
         )
 
     def request_approval(self, event):
-        # message = event["message"]
-        # status = event["status"]
-        # approved_data = event["approved_data"]
-        self.send(text_data=json.dumps(event))
+        status = event["status"]
+        data = event["data"]
+        if status:
+
+            self.send(
+                text_data=json.dumps(
+                    {
+                        "type": "request.approved",
+                        "message": "Your scan request was approved.",
+                        "data": data,
+                    }
+                )
+            )
+        else:
+            self.send(
+                text_data=json.dumps(
+                    {
+                        "type": "request.rejected",
+                        "message": "Your scan request was rejected.",
+                    }
+                )
+            )
 
     # def disconnect(self, code):
     #     return super().disconnect(code)

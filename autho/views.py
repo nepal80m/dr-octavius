@@ -195,6 +195,7 @@ class OTPAuthView(APIView):
             response = {
                 "token": token.key,
             }
+            print(f"Verified and sending auth token back. {token.key}")
             return Response(response, status=status.HTTP_200_OK)
         else:
             return Response(
