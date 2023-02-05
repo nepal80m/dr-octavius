@@ -77,9 +77,6 @@ def send_sms_with_otp(mobile_number, otp):
 
 
 class GenerateOTPView(APIView):
-    """
-    This returns a 6-digit callback token we can trade for a user's Auth Token.
-    """
 
     permission_classes = (AllowAny,)
 
@@ -129,8 +126,8 @@ class GenerateOTPView(APIView):
                 )
 
             # Checking if the requested mobile number matches the registered mobile number
-            trimmed_mobile_number = mobile_number.as_e164[4:]
-            if result["NID_mobile_number"] != trimmed_mobile_number:
+            trimmed_mobile_number = mobile_number.as_e164
+            if result["mobile_number"] != trimmed_mobile_number:
                 return Response(
                     {"message": "Invalid mobile number."},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -147,7 +144,6 @@ class GenerateOTPView(APIView):
             """
 
             serializer.save()  # Generate OTP
-
             user = serializer.validated_data["user"]
             otp_token = serializer.validated_data["otp_token"]
             # TODO: Send OTP
@@ -177,10 +173,6 @@ class GenerateOTPView(APIView):
 
 
 class OTPAuthView(APIView):
-    """
-    This is a duplicate of rest_framework's own ObtainAuthToken method.
-    Instead, this returns an Auth Token based on our 6 digit callback token and source.
-    """
 
     permission_classes = (AllowAny,)
 

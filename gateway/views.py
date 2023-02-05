@@ -14,7 +14,80 @@ from core.models import CoreConfig
 User = get_user_model()
 
 
-def fetch_all_documents(NIN):
+def fetch_NID(token, NIN):
+    headers = {
+        "Authorization": f"Bearer {token}",
+    }
+
+    nid_url = settings.POCHITA_BASE_URL + f"nid/{NIN}/"
+
+    nid_result = requests.get(nid_url, headers=headers)
+    nid_status_code = nid_result.status_code
+    if nid_status_code != 200:
+        nid = None
+    else:
+        nid = nid_result.json()
+
+    return nid
+
+
+def fetch_CTZ(token, NIN):
+    headers = {
+        "Authorization": f"Bearer {token}",
+    }
+
+    ctz_url = settings.POCHITA_BASE_URL + f"ctz/{NIN}/"
+
+    ctz_result = requests.get(ctz_url, headers=headers)
+    ctz_status_code = ctz_result.status_code
+    if ctz_status_code != 200:
+        ctz = None
+    else:
+        ctz = ctz_result.json()
+
+    return ctz
+
+
+def fetch_DVL(token, NIN):
+    headers = {
+        "Authorization": f"Bearer {token}",
+    }
+
+    dvl_url = settings.POCHITA_BASE_URL + f"dvl/{NIN}/"
+
+    dvl_result = requests.get(dvl_url, headers=headers)
+    dvl_status_code = dvl_result.status_code
+    if dvl_status_code != 200:
+        dvl = None
+    else:
+        dvl = dvl_result.json()
+
+    return dvl
+
+
+# def fetch_all_documents(NIN):
+
+#     try:
+#         pochita_token_config = get_object_or_404(
+#             CoreConfig, app="core", key="pochita_token"
+#         )
+#         token = pochita_token_config.value
+#     except Http404:
+#         print("Pochita token was not found.")
+#         return Response(
+#             {"message": "Something went wrong."},
+#             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#         )
+#     nid = fetch_NID(token, NIN)
+#     ctz = fetch_CTZ(token, NIN)
+#     dvl = fetch_DVL(token, NIN)
+
+#     documents = {"NID": nid, "CTZ": ctz, "DVL": dvl}
+
+#     return documents
+
+
+def fetch_documents(NIN: str, documents: list[str] = [], fetch_all: bool = False):
 
     try:
         pochita_token_config = get_object_or_404(
@@ -27,23 +100,20 @@ def fetch_all_documents(NIN):
             {"message": "Something went wrong."},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+    fetched_documents = {}
+    if fetch_all or ("NID" in documents):
+        nid = fetch_NID(token, NIN)
+        fetched_documents["NID"] = nid
 
-    nid_url = settings.POCHITA_BASE_URL + f"nid/{NIN}/"
+    if fetch_all or ("CTZ" in documents):
+        ctz = fetch_CTZ(token, NIN)
+        fetched_documents["CTZ"] = ctz
 
-    headers = {
-        "Authorization": f"Bearer {token}",
-    }
-    nid_result = requests.get(nid_url, headers=headers)
-    nid_status_code = nid_result.status_code
-    nid = nid_result.json()
+    if fetch_all or ("DVL" in documents):
+        dvl = fetch_DVL(token, NIN)
+        fetched_documents["DVL"] = dvl
 
-    documents = [
-        {
-            "document_type": "NID",
-            "document_details": nid,
-        },
-    ]
-    return documents
+    return fetched_documents
 
 
 # This view is used to get all the documents of a user.
@@ -55,7 +125,8 @@ class GetDocumentsView(APIView):
         # Getting the Pochita token from the database
 
         try:
-            documents = fetch_all_documents(NIN)
+            # documents = fetch_all_documents(NIN)
+            documents = fetch_documents(NIN=NIN, fetch_all=True)
         except Exception as e:
             print(e)
             print("Couldn't fetch the documents")

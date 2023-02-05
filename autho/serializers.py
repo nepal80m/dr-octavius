@@ -126,8 +126,9 @@ class OTPAuthSerializer(serializers.Serializer):
     )
 
     def validate(self, data):
-        username = data.get("NIN")
-        mobile_number = data.get("mobile_number")
+        validated_data = super().validate(data)
+        username = validated_data["NIN"]
+        mobile_number = validated_data["mobile_number"]
         opt = data.get("otp")
         print(f"Received OTP: {opt} to verify {username} and {mobile_number}")
         try:

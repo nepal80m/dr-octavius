@@ -72,7 +72,7 @@ INSTALLED_APPS = (
         "core",
         "autho",
         "gateway",
-        "scan_to_share",
+        "qr",
     ]
 )
 
@@ -80,11 +80,28 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3004",
 ]
 ASGI_APPLICATION = "config.asgi.application"
+
+REDIS_HOST = os.environ.get("REDIS_HOST")
+REDIS_PORT = os.environ.get("REDIS_PORT")
+
+
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
-    }
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(REDIS_HOST, REDIS_PORT)],
+        },
+    },
 }
+
+
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels.layers.InMemoryChannelLayer",
+#     }
+# }
+
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",

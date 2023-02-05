@@ -21,6 +21,6 @@ urlpatterns = [
     # path("", include("auth.urls")),
     # path("", include("drfpasswordless.urls")),
     path("api/v1/auth/", include("autho.urls")),
-    path("api/v1/digital-identity/", include("gateway.urls")),
-    path("api/v1/scan-request/", include("scan_to_share.urls")),
+    path("api/v1/identity/", include("gateway.urls")),
+    path("api/v1/qr/", include("qr.urls")),
 ]
