@@ -15,6 +15,14 @@ from django.shortcuts import get_object_or_404
 import requests
 from rest_framework.permissions import AllowAny
 from gateway.views import fetch_documents
+from history.models import ActivityHistory
+from history.constants import (
+    QR_SCANNED,
+    APPROVED_ACCESS_REQUEST,
+    VIEWED_SHARED_DETAILS,
+    DOCUMENT_CODE_DVL,
+    DOCUMENT_CODE_AGE,
+)
 
 # Send by webapp to start new request session.
 # class IdentityAccessRequestCreateView(CreateAPIView):
@@ -23,10 +31,25 @@ from gateway.views import fetch_documents
 
 
 class IdentityAccessRequestDetailView(RetrieveAPIView):
-    permission_classes = [AllowAny]
+    # permission_classes = [AllowAny]
     queryset = IdentityAccessRequest.objects.filter(is_active=True).all()
     lookup_field = "request_id"
     serializer_class = IdentityAccessRequestSerializer
+
+    def retrieve(self, request, request_id, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+
+        user = request.user
+        ActivityHistory.objects.create(
+            user=user,
+            activity=QR_SCANNED.activity_code,
+            description=QR_SCANNED.description.format(
+                source=f"{instance.requester.name} ({instance.requester.domain})"
+            ),
+        )
+
+        return Response(serializer.data)
 
 
 class IdentityAccessRequestApprovalView(APIView):
@@ -98,6 +121,15 @@ class IdentityAccessRequestApprovalView(APIView):
 
         access_request.delete()
 
+        ActivityHistory.objects.create(
+            user=user,
+            activity=APPROVED_ACCESS_REQUEST.activity_code,
+            description=APPROVED_ACCESS_REQUEST.description.format(
+                requester=f"{access_request.requester.name} ({access_request.requester.domain})"
+            ),
+            extra_info={"approved_fields": access_request.requester.requested_fields},
+        )
+
         return Response(
             {
                 "request_id": request_id,
@@ -141,10 +173,19 @@ class AccessPermittedIdentityView(APIView):
                 "data": {"viewer": full_name},
             },
         )
-
         if permitted_document_code == "DVL":
             documents = fetch_documents(NIN=permitted_by.username, documents=["DVL"])
             dvl = documents["DVL"]
+
+            ActivityHistory.objects.create(
+                user=permitted_by,
+                activity=VIEWED_SHARED_DETAILS.activity_code,
+                description=VIEWED_SHARED_DETAILS.description.format(
+                    viewer=full_name,
+                    document=DOCUMENT_CODE_DVL,
+                ),
+                extra_info={"fields": list(dvl.keys())},
+            )
             return Response(
                 {
                     "permitted_document_code": permitted_document_code,
@@ -162,6 +203,15 @@ class AccessPermittedIdentityView(APIView):
                 "last_name": nid.get("last_name"),
                 "dob": nid.get("dob"),
             }
+            ActivityHistory.objects.create(
+                user=permitted_by,
+                activity=VIEWED_SHARED_DETAILS.activity_code,
+                description=VIEWED_SHARED_DETAILS.description.format(
+                    viewer=full_name,
+                    document=DOCUMENT_CODE_AGE,
+                ),
+                extra_info={"fields": list(permitted_document.keys())},
+            )
             return Response(
                 {
                     "permitted_document_code": permitted_document_code,

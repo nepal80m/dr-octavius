@@ -7,6 +7,8 @@ from django.core.management.utils import get_random_secret_key
 
 from qr.models import IdentityAccessRequest, AuthorizedRequester, IdentityAccessPermit
 from qr.serializers import IdentityAccessPermitSerializer
+from history.models import ActivityHistory
+from history.constants import QR_GENERATED, DOCUMENT_CODE_AGE, DOCUMENT_CODE_DVL
 
 
 class IdentityAccessRequestConsumer(WebsocketConsumer):
@@ -130,6 +132,19 @@ class IdentityAccessPermitConsumer(WebsocketConsumer):
                 )
                 print(
                     f"Created the access permit for user {self.user} with channel name {self.channel_name}"
+                )
+
+                permitted_document_code = access_permit.permitted_document_code
+                if permitted_document_code == "AGE":
+                    document = DOCUMENT_CODE_AGE
+                elif permitted_document_code == "DVL":
+                    document = DOCUMENT_CODE_DVL
+                else:
+                    document = ""
+                ActivityHistory.objects.create(
+                    user=self.user,
+                    activity=QR_GENERATED.activity_code,
+                    description=QR_GENERATED.description.format(document=document),
                 )
 
                 self.send(

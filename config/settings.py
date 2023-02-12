@@ -67,12 +67,14 @@ INSTALLED_APPS = (
         "rest_framework",
         "rest_framework.authtoken",
         "phonenumber_field",
+        "django_user_agents",
     ]
     + [
         "core",
         "autho",
         "gateway",
         "qr",
+        "history",
     ]
 )
 
@@ -112,6 +114,7 @@ MIDDLEWARE = [
     # "django_otp.middleware.OTPMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_user_agents.middleware.UserAgentMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"

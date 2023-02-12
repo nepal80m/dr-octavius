@@ -15,6 +15,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.http import Http404
+from history.models import ActivityHistory
+from history.constants import LOGGED_IN
 
 # from rest_framework import viewsets
 # from django.contrib.auth import get_user_model
@@ -81,12 +83,23 @@ class GenerateOTPView(APIView):
     permission_classes = (AllowAny,)
 
     def post(self, request, *args, **kwargs):
+        print(request)
+        print(request.META["HTTP_USER_AGENT"])
+        print(request.user_agent.browser)
+        print(request.user_agent.os)
+        print(request.user_agent.os.family)
+        print(request.user_agent.os.version)
+        print(request.user_agent.os.version_string)
+        print(request.user_agent.device)
+        print(request.user_agent.device.family)
 
+        print("Received request to generate OTP")
         serializer = GenerateOTPSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
+
             NIN = serializer.validated_data["NIN"]
             mobile_number = serializer.validated_data["mobile_number"]
-
+            print(f"Validated NIN:{NIN} and mobile number:{mobile_number}")
             # Make query to the blockchain to check if the NIN is valid.
             url = settings.POCHITA_BASE_URL + f"nid/{NIN}/"
             # Getting the Pochita token from the database
@@ -94,6 +107,7 @@ class GenerateOTPView(APIView):
                 pochita_token_config = get_object_or_404(
                     CoreConfig, app="core", key="pochita_token"
                 )
+                print("Retrieved Pochita token")
             except Http404:
                 print("Pochita token was not found")
                 return Response(
@@ -101,18 +115,19 @@ class GenerateOTPView(APIView):
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
             token = pochita_token_config.value
+
             headers = {
                 "Authorization": f"Bearer {token}",
             }
 
             # Getting the NIN details from the blockchain
             try:
-
+                print("Sending request to blockchain")
                 response = requests.get(url, headers=headers)
                 status_code = response.status_code
                 result = response.json()
-                print(status_code)
-                print(result)
+                print(f"Got response with status code:", status_code)
+                # print(result)
                 if status_code != 200:
                     return Response(
                         {"message": "Invalid NIN."},
@@ -187,6 +202,14 @@ class OTPAuthView(APIView):
             response = {
                 "token": token.key,
             }
+            ActivityHistory.objects.create(
+                user=user,
+                activity=LOGGED_IN.activity_code,
+                description=LOGGED_IN.description.format(device="Android"),
+            )
+
+            print(f"Created logged in activity history.")
+
             print(f"Verified and sending auth token back. {token.key}")
             return Response(response, status=status.HTTP_200_OK)
         else:
