@@ -10,6 +10,7 @@ from rest_framework.permissions import AllowAny
 from django.conf import settings
 from django.http import Http404
 from core.models import CoreConfig
+import card_generator
 
 User = get_user_model()
 
@@ -103,14 +104,30 @@ def fetch_documents(NIN: str, documents: list[str] = [], fetch_all: bool = False
     fetched_documents = {}
     if fetch_all or ("NID" in documents):
         nid = fetch_NID(token, NIN)
+        if nid is not None:
+            nid_card_front = card_generator.generate_nid_front(nid)
+            nid_card_back = card_generator.generate_nid_back(nid)
+            nid["card_front"] = nid_card_front
+            nid["card_back"] = nid_card_back
+
         fetched_documents["NID"] = nid
 
     if fetch_all or ("CTZ" in documents):
         ctz = fetch_CTZ(token, NIN)
+        if ctz is not None:
+            ctz_card_front = card_generator.generate_ctz_front(ctz)
+            ctz_card_back = card_generator.generate_ctz_back(ctz)
+            ctz["card_front"] = ctz_card_front
+            ctz["card_back"] = ctz_card_back
         fetched_documents["CTZ"] = ctz
 
     if fetch_all or ("DVL" in documents):
         dvl = fetch_DVL(token, NIN)
+        if dvl is not None:
+            dvl_card_front = card_generator.generate_dvl_front(dvl)
+            dvl_card_back = card_generator.generate_dvl_back(dvl)
+            dvl["card_front"] = dvl_card_front
+            dvl["card_back"] = dvl_card_back
         fetched_documents["DVL"] = dvl
 
     return fetched_documents

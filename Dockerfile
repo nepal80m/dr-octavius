@@ -11,7 +11,7 @@ RUN mkdir -p /var/log/octavius
 WORKDIR /octavius/src/
 
 COPY ./requirements.txt /octavius/src/requirements.txt
-
+RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 COPY . /octavius/src/
