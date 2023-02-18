@@ -49,7 +49,7 @@ class GenerateOTPSerializer(serializers.Serializer):
         username = validated_data["NIN"]
         mobile_number = validated_data["mobile_number"]
         try:
-            user = User.objects.get(username=username, mobile_number=mobile_number)
+            user = User.objects.get(username=username)
         except User.DoesNotExist:
             user = User.objects.create(username=username, mobile_number=mobile_number)
             user.set_unusable_password()
