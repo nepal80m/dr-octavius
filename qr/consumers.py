@@ -24,7 +24,8 @@ class IdentityAccessRequestConsumer(WebsocketConsumer):
         print(f"Got connection request from {client[0]}")
 
         # Verify if the host is registered..
-        requester = AuthorizedRequester.objects.filter(domain=host).first()
+        client = f"http://{client[0]}"
+        requester = AuthorizedRequester.objects.filter(domain=client).first()
 
         # Override requester if it is localhost.
         if host.startswith("localhost"):
