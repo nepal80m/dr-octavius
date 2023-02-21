@@ -67,7 +67,25 @@ class IdentityAccessRequestApprovalView(APIView):
         access_request = get_object_or_404(
             IdentityAccessRequest, request_id=request_id, is_active=True
         )
+        channel_layer = channels.layers.get_channel_layer()
 
+        print("Sending approval to socket")
+        async_to_sync(channel_layer.send)(
+            access_request.channel_name,
+            {
+                "type": "access_request_approval",
+                "status": is_approved,
+            },
+        )
+
+        if not is_approved:
+            print("Access request was rejected.")
+            return Response(
+                {"message": "Access request was rejected."},
+                status=status.HTTP_200_OK,
+            )
+
+        print("Access request was approved.")
         approved_data = {}
         # for field in access_request.requester.requested_fields:
         #     approved_data[field] = None
@@ -94,14 +112,12 @@ class IdentityAccessRequestApprovalView(APIView):
             #     for field, field_value in document_details.items():
             #         if field in approved_data:
             #             approved_data[field] = field_value
-        print("Sending approval to socket")
-        channel_layer = channels.layers.get_channel_layer()
+        print("Sending approved data to socket")
 
         async_to_sync(channel_layer.send)(
             access_request.channel_name,
             {
-                "type": "access_request_approval",
-                "status": is_approved,
+                "type": "send_requested_data",
                 "data": approved_data,
             },
         )

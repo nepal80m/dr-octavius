@@ -20,10 +20,9 @@ class IdentityAccessRequestConsumer(WebsocketConsumer):
         print(headers)
         host = headers["host"]
         client = self.scope["client"]
-        print(f"Got connection request from {host} OR,")
         print(f"Got connection request from {client[0]}")
 
-        # Verify if the host is registered..
+        # Verify if the client is registered..
         client = f"http://{client[0]}"
         requester = AuthorizedRequester.objects.filter(domain=client).first()
 
@@ -81,7 +80,6 @@ class IdentityAccessRequestConsumer(WebsocketConsumer):
                     {
                         "type": "request.approved",
                         "message": "Your access request was approved.",
-                        "data": data,
                     }
                 )
             )
@@ -94,6 +92,18 @@ class IdentityAccessRequestConsumer(WebsocketConsumer):
                     }
                 )
             )
+
+    def send_requested_data(self, event):
+        data = event["data"]
+
+        self.send(
+            text_data=json.dumps(
+                {
+                    "type": "request.data",
+                    "data": data,
+                }
+            )
+        )
 
     def disconnect(self, code):
 
