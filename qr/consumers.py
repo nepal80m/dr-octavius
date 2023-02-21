@@ -72,7 +72,6 @@ class IdentityAccessRequestConsumer(WebsocketConsumer):
 
     def access_request_approval(self, event):
         status = event["status"]
-        data = event["data"]
         if status:
 
             self.send(
