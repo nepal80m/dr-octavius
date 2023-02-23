@@ -23,13 +23,21 @@ import requests
 
 class IdentityAccessRequestSerializer(serializers.ModelSerializer):
     requester = serializers.CharField(source="requester.name", read_only=True)
+    requester_domain = serializers.CharField(source="requester.domain", read_only=True)
+    requester_logo = serializers.CharField(source="requester.logo.url", read_only=True)
     requested_fields = serializers.JSONField(
         source="requester.requested_fields", read_only=True
     )
 
     class Meta:
         model = IdentityAccessRequest
-        fields = ("request_id", "requester", "requested_fields")
+        fields = (
+            "request_id",
+            "requester",
+            "requester_domain",
+            "requester_logo",
+            "requested_fields",
+        )
 
 
 class IdentityAccessRequestApprovalSerializer(serializers.Serializer):

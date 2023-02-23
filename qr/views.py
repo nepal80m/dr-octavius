@@ -143,7 +143,7 @@ class IdentityAccessRequestApprovalView(APIView):
             description=APPROVED_ACCESS_REQUEST.description.format(
                 requester=f"{access_request.requester.name} ({access_request.requester.domain})"
             ),
-            extra_info={"approved_fields": access_request.requester.requested_fields},
+            extra_info={"fields": access_request.requester.requested_fields},
         )
 
         return Response(

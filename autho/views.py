@@ -83,15 +83,6 @@ class GenerateOTPView(APIView):
     permission_classes = (AllowAny,)
 
     def post(self, request, *args, **kwargs):
-        print(request)
-        print(request.META["HTTP_USER_AGENT"])
-        print(request.user_agent.browser)
-        print(request.user_agent.os)
-        print(request.user_agent.os.family)
-        print(request.user_agent.os.version)
-        print(request.user_agent.os.version_string)
-        print(request.user_agent.device)
-        print(request.user_agent.device.family)
 
         print("Received request to generate OTP")
         serializer = GenerateOTPSerializer(data=request.data)
@@ -192,6 +183,10 @@ class OTPAuthView(APIView):
     permission_classes = (AllowAny,)
 
     def post(self, request, *args, **kwargs):
+        headers = request.headers
+        device_model = headers.get("Model", None)
+        device_os = headers.get("Os", None)
+        # print(request["os"])
         serializer = OTPAuthSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             user = serializer.validated_data["user"]
@@ -205,7 +200,9 @@ class OTPAuthView(APIView):
             ActivityHistory.objects.create(
                 user=user,
                 activity=LOGGED_IN.activity_code,
-                description=LOGGED_IN.description.format(device="Android"),
+                description=LOGGED_IN.description.format(
+                    device=f"{device_model} ({device_os.capitalize()})"
+                ),
             )
 
             print(f"Created logged in activity history.")

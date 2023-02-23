@@ -9,6 +9,9 @@ from autho.models import User
 class AuthorizedRequester(TimeStampedModel):
     name = models.CharField(max_length=255)
     domain = models.URLField(max_length=255, unique=True)
+    logo = models.ImageField(
+        upload_to="authorized_requester_logo", blank=True, null=True
+    )
     is_active = models.BooleanField(default=True)
     requested_fields = models.JSONField()
 
