@@ -130,7 +130,7 @@ def generate_ctz_front(ctz=dummy_data["documents"]["CTZ"]):
         font=devanagari_regular_90,
     )
 
-    dob = datetime.date.fromisoformat(ctz["dob"])
+    dob = datetime.date.fromisoformat(ctz["date_of_birth"])
     dob_bs = nepali_datetime.date.from_datetime_date(dob)
     print(dob_bs)
 

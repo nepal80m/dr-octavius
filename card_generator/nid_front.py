@@ -93,7 +93,7 @@ def generate_nid_front(nid=dummy_data["documents"]["NID"]):
         font=calibre_medium_20,
     )
 
-    dob = datetime.date.fromisoformat(nid["dob"])
+    dob = datetime.date.fromisoformat(nid["date_of_birth"])
     dob_bs = nepali_datetime.date.from_datetime_date(dob)
 
     # dob nepali

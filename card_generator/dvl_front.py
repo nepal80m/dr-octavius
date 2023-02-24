@@ -117,7 +117,7 @@ def generate_dvl_front(dvl=dummy_data["documents"]["DVL"]):
     )
 
     # dob
-    dob = datetime.date.fromisoformat(dvl["dob"])
+    dob = datetime.date.fromisoformat(dvl["date_of_birth"])
 
     I1.text(
         (995, 835),
