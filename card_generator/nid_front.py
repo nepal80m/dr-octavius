@@ -93,8 +93,8 @@ def generate_nid_front(nid=dummy_data["documents"]["NID"]):
         font=calibre_medium_20,
     )
 
-    dob = datetime.datetime.strptime(nid["dob"], "%Y-%m-%dT%H:%M:%S.%f%z")
-    dob_bs = nepali_datetime.datetime.from_datetime_datetime(dob)
+    dob = datetime.date.fromisoformat(nid["dob"])
+    dob_bs = nepali_datetime.date.from_datetime_date(dob)
 
     # dob nepali
     I1.text(
@@ -136,7 +136,7 @@ def generate_nid_front(nid=dummy_data["documents"]["NID"]):
     )
 
     # Date of issue
-    doi = datetime.datetime.strptime(nid["NID_date_of_issue"], "%Y-%m-%dT%H:%M:%S.%f%z")
+    doi = datetime.date.fromisoformat(nid["NID_date_of_issue"])
     I1.text(
         (232, 480),
         doi.strftime("%d-%m-%Y"),

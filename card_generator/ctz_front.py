@@ -97,7 +97,7 @@ def generate_ctz_front(ctz=dummy_data["documents"]["CTZ"]):
         font=devanagari_regular_90,
     )
     # birth_ward
-    birth_ward_dev = replace_with_nepali_numbers(ctz["birth_ward"])
+    birth_ward_dev = replace_with_nepali_numbers(ctz["birth_ward_number"])
     I1.text(
         (2405, 880),
         birth_ward_dev,
@@ -122,7 +122,7 @@ def generate_ctz_front(ctz=dummy_data["documents"]["CTZ"]):
         font=devanagari_regular_90,
     )
     # permanent_ward
-    permanent_ward_dev = replace_with_nepali_numbers(ctz["permanent_ward"])
+    permanent_ward_dev = replace_with_nepali_numbers(ctz["permanent_ward_number"])
     I1.text(
         (2405, 1070),
         permanent_ward_dev,
@@ -130,8 +130,8 @@ def generate_ctz_front(ctz=dummy_data["documents"]["CTZ"]):
         font=devanagari_regular_90,
     )
 
-    dob = datetime.datetime.strptime(ctz["dob"], "%Y-%m-%dT%H:%M:%S.%f%z")
-    dob_bs = nepali_datetime.datetime.from_datetime_datetime(dob)
+    dob = datetime.date.fromisoformat(ctz["dob"])
+    dob_bs = nepali_datetime.date.from_datetime_date(dob)
     print(dob_bs)
 
     # dob_year

@@ -63,7 +63,7 @@ def generate_ctz_back(ctz=dummy_data["documents"]["CTZ"]):
         font=times_new_roman_regular_50,
     )
 
-    dob = datetime.datetime.strptime(ctz["dob"], "%Y-%m-%dT%H:%M:%S.%f%z")
+    dob = datetime.date.fromisoformat(ctz["date_of_birth"])
 
     # dob_year
     dob_year = dob.strftime("%Y")
@@ -107,7 +107,7 @@ def generate_ctz_back(ctz=dummy_data["documents"]["CTZ"]):
         font=times_new_roman_regular_50,
     )
     # birth_ward
-    birth_ward = ctz["birth_ward"]
+    birth_ward = ctz["birth_ward_number"]
 
     I1.text(
         (1840, 495),
@@ -133,7 +133,7 @@ def generate_ctz_back(ctz=dummy_data["documents"]["CTZ"]):
         font=times_new_roman_regular_50,
     )
     # permanent_ward
-    permanent_ward = ctz["permanent_ward"]
+    permanent_ward = ctz["permanent_ward_number"]
 
     I1.text(
         (1840, 650),
@@ -170,8 +170,8 @@ def generate_ctz_back(ctz=dummy_data["documents"]["CTZ"]):
     )
 
     # date of issue
-    date_of_issue = datetime.datetime.strptime(ctz["dob"], "%Y-%m-%dT%H:%M:%S.%f%z")
-    date_of_issue_bs = nepali_datetime.datetime.from_datetime_datetime(date_of_issue)
+    date_of_issue = datetime.date.fromisoformat(ctz["dob"])
+    date_of_issue_bs = nepali_datetime.date.from_datetime_date(date_of_issue)
 
     I1.text(
         (1545, 1120),

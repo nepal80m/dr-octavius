@@ -59,7 +59,7 @@ def generate_dvl_front(dvl=dummy_data["documents"]["DVL"]):
     )
 
     # doi
-    doi = datetime.datetime.strptime(dvl["DVL_date_of_issue"], "%Y-%m-%dT%H:%M:%S.%f%z")
+    doi = datetime.date.fromisoformat(dvl["DVL_date_of_issue"])
 
     I1.text(
         (155, 1115),
@@ -68,9 +68,7 @@ def generate_dvl_front(dvl=dummy_data["documents"]["DVL"]):
         font=calibre_regular_70,
     )
     # doe
-    doe = datetime.datetime.strptime(
-        dvl["DVL_date_of_expiry"], "%Y-%m-%dT%H:%M:%S.%f%z"
-    )
+    doe = datetime.date.fromisoformat(dvl["DVL_date_of_expiry"])
 
     I1.text(
         (155, 1195),
@@ -119,7 +117,7 @@ def generate_dvl_front(dvl=dummy_data["documents"]["DVL"]):
     )
 
     # dob
-    dob = datetime.datetime.strptime(dvl["dob"], "%Y-%m-%dT%H:%M:%S.%f%z")
+    dob = datetime.date.fromisoformat(dvl["dob"])
 
     I1.text(
         (995, 835),
