@@ -170,7 +170,7 @@ def generate_ctz_back(ctz=dummy_data["documents"]["CTZ"]):
     )
 
     # date of issue
-    date_of_issue = datetime.date.fromisoformat(ctz["dob"])
+    date_of_issue = datetime.date.fromisoformat(ctz["date_of_birth"])
     date_of_issue_bs = nepali_datetime.date.from_datetime_date(date_of_issue)
 
     I1.text(
