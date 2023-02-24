@@ -107,7 +107,7 @@ def generate_ctz_back(ctz=dummy_data["documents"]["CTZ"]):
         font=times_new_roman_regular_50,
     )
     # birth_ward
-    birth_ward = ctz["birth_ward_number"]
+    birth_ward = str(ctz["birth_ward_number"])
 
     I1.text(
         (1840, 495),
@@ -133,7 +133,7 @@ def generate_ctz_back(ctz=dummy_data["documents"]["CTZ"]):
         font=times_new_roman_regular_50,
     )
     # permanent_ward
-    permanent_ward = ctz["permanent_ward_number"]
+    permanent_ward = str(ctz["permanent_ward_number"])
 
     I1.text(
         (1840, 650),

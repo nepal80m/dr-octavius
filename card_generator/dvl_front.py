@@ -91,7 +91,7 @@ def generate_dvl_front(dvl=dummy_data["documents"]["DVL"]):
 
     # permanent_municipality - ward
     permanent_municipality = dvl["permanent_municipality"]
-    permanent_ward = dvl["permanent_ward"]
+    permanent_ward = str(dvl["permanent_ward_number"])
     I1.text(
         (995, 635),
         f"Address: {permanent_municipality} - {permanent_ward}",
