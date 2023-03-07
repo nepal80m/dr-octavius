@@ -9,24 +9,23 @@ from card_generator.utils import dummy_data
 
 # 2107 × 1388
 # x3.45
-ctz_back_blank_card = Image.open("card_generator/blank_cards/ctz_back_blank.png")
-
-times_new_roman_regular_50 = ImageFont.truetype(
-    "card_generator/fonts/TimesNewRoman-Regular.ttf", 50
-)
-times_new_roman_font_bold_50 = ImageFont.truetype(
-    "card_generator/fonts/TimesNewRoman-Bold.ttf", 50
-)
-devanagari_regular_65 = ImageFont.truetype(
-    "card_generator/fonts/AdobeDevanagari-Regular.otf", 65
-)
-devanagari_bold_65 = ImageFont.truetype(
-    "card_generator/fonts/AdobeDevanagari-Bold.otf", 65
-)
 
 
 def generate_ctz_back(ctz=dummy_data["documents"]["CTZ"]):
-    pass
+    ctz_back_blank_card = Image.open("card_generator/blank_cards/ctz_back_blank.png")
+
+    times_new_roman_regular_50 = ImageFont.truetype(
+        "card_generator/fonts/TimesNewRoman-Regular.ttf", 50
+    )
+    times_new_roman_font_bold_50 = ImageFont.truetype(
+        "card_generator/fonts/TimesNewRoman-Bold.ttf", 50
+    )
+    devanagari_regular_65 = ImageFont.truetype(
+        "card_generator/fonts/AdobeDevanagari-Regular.otf", 65
+    )
+    devanagari_bold_65 = ImageFont.truetype(
+        "card_generator/fonts/AdobeDevanagari-Bold.otf", 65
+    )
 
     # ctz = dummy_data["documents"]["CTZ"]
 

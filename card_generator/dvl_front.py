@@ -8,26 +8,27 @@ import nepali_datetime
 
 from card_generator.utils import dummy_data
 
-# Open an Image
-dvl_front_blank_card = Image.open("card_generator/blank_cards/dvl_front_blank.png")
-
-times_new_roman_regular_50 = ImageFont.truetype(
-    "card_generator/fonts/TimesNewRoman-Regular.ttf", 50
-)
-times_new_roman_bold_50 = ImageFont.truetype(
-    "card_generator/fonts/TimesNewRoman-Bold.ttf", 50
-)
-calibre_regular_70 = ImageFont.truetype("card_generator/fonts/Calibre-Regular.otf", 70)
-
-devanagari_regular_65 = ImageFont.truetype(
-    "card_generator/fonts/AdobeDevanagari-Regular.otf", 65
-)
-devanagari_bold_65 = ImageFont.truetype(
-    "card_generator/fonts/AdobeDevanagari-Bold.otf", 65
-)
-
 
 def generate_dvl_front(dvl=dummy_data["documents"]["DVL"]):
+    # Open an Image
+    dvl_front_blank_card = Image.open("card_generator/blank_cards/dvl_front_blank.png")
+
+    times_new_roman_regular_50 = ImageFont.truetype(
+        "card_generator/fonts/TimesNewRoman-Regular.ttf", 50
+    )
+    times_new_roman_bold_50 = ImageFont.truetype(
+        "card_generator/fonts/TimesNewRoman-Bold.ttf", 50
+    )
+    calibre_regular_70 = ImageFont.truetype(
+        "card_generator/fonts/Calibre-Regular.otf", 70
+    )
+
+    devanagari_regular_65 = ImageFont.truetype(
+        "card_generator/fonts/AdobeDevanagari-Regular.otf", 65
+    )
+    devanagari_bold_65 = ImageFont.truetype(
+        "card_generator/fonts/AdobeDevanagari-Bold.otf", 65
+    )
 
     # im = Image.open(BytesIO(base64.b64decode(ctz["face_image"])))
 

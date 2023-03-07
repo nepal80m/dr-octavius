@@ -3,27 +3,29 @@ from io import BytesIO
 from PIL import Image, ImageFont, ImageDraw
 import datetime
 import nepali_datetime
-import re
 
 # 831 × 533
 # x1.54
 from card_generator.utils import dummy_data, replace_with_nepali_numbers
 
-# Open an Image
-nid_front_blank_card = Image.open("card_generator/blank_cards/nid_front_blank.png")
-
-calibre_regular_20 = ImageFont.truetype("card_generator/fonts/Calibre-Regular.otf", 20)
-calibre_medium_20 = ImageFont.truetype("card_generator/fonts/Calibre-Medium.otf", 20)
-
-devanagari_regular_24 = ImageFont.truetype(
-    "card_generator/fonts/AdobeDevanagari-Regular.otf", 24
-)
-devanagari_bold_24 = ImageFont.truetype(
-    "card_generator/fonts/AdobeDevanagari-Bold.otf", 24
-)
-
 
 def generate_nid_front(nid=dummy_data["documents"]["NID"]):
+    # Open an Image
+    nid_front_blank_card = Image.open("card_generator/blank_cards/nid_front_blank.png")
+
+    calibre_regular_20 = ImageFont.truetype(
+        "card_generator/fonts/Calibre-Regular.otf", 20
+    )
+    calibre_medium_20 = ImageFont.truetype(
+        "card_generator/fonts/Calibre-Medium.otf", 20
+    )
+
+    devanagari_regular_24 = ImageFont.truetype(
+        "card_generator/fonts/AdobeDevanagari-Regular.otf", 24
+    )
+    devanagari_bold_24 = ImageFont.truetype(
+        "card_generator/fonts/AdobeDevanagari-Bold.otf", 24
+    )
 
     # nid = dummy_data["documents"]["NID"]
 

@@ -9,19 +9,17 @@ from card_generator.utils import dummy_data, replace_with_nepali_numbers
 # x5
 
 
-# Open an Image
-ctz_front_blank_card = Image.open("card_generator/blank_cards/ctz_front_blank.png")
-
-devanagari_regular_90 = ImageFont.truetype(
-    "card_generator/fonts/AdobeDevanagari-Regular.otf", 90
-)
-devanagari_bold_90 = ImageFont.truetype(
-    "card_generator/fonts/AdobeDevanagari-Bold.otf", 90
-)
-
-
 # Call draw Method to add 2D graphics in an image
 def generate_ctz_front(ctz=dummy_data["documents"]["CTZ"]):
+    # Open an Image
+    ctz_front_blank_card = Image.open("card_generator/blank_cards/ctz_front_blank.png")
+
+    devanagari_regular_90 = ImageFont.truetype(
+        "card_generator/fonts/AdobeDevanagari-Regular.otf", 90
+    )
+    devanagari_bold_90 = ImageFont.truetype(
+        "card_generator/fonts/AdobeDevanagari-Bold.otf", 90
+    )
 
     # ctz = dummy_data["documents"]["CTZ"]
 
