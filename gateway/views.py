@@ -1,4 +1,5 @@
 import requests
+import datetime
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
@@ -32,6 +33,21 @@ def fetch_NID(token, NIN):
     return nid
 
 
+def fetch_NID_latest_update_date(token, NIN):
+    headers = {
+        "Authorization": f"Bearer {token}",
+    }
+
+    nid_url = settings.POCHITA_BASE_URL + f"nid/last-updated-date/{NIN}/"
+
+    nid_result = requests.get(nid_url, headers=headers)
+    nid_status_code = nid_result.status_code
+    if nid_status_code != 200:
+        return None
+    else:
+        return nid_result.json()
+
+
 def fetch_CTZ(token, NIN):
     headers = {
         "Authorization": f"Bearer {token}",
@@ -49,6 +65,21 @@ def fetch_CTZ(token, NIN):
     return ctz
 
 
+def fetch_CTZ_latest_update_date(token, NIN):
+    headers = {
+        "Authorization": f"Bearer {token}",
+    }
+
+    ctz_url = settings.POCHITA_BASE_URL + f"ctz/last-updated-date/{NIN}/"
+
+    ctz_result = requests.get(ctz_url, headers=headers)
+    ctz_status_code = ctz_result.status_code
+    if ctz_status_code != 200:
+        return None
+    else:
+        return ctz_result.json()
+
+
 def fetch_DVL(token, NIN):
     headers = {
         "Authorization": f"Bearer {token}",
@@ -64,6 +95,21 @@ def fetch_DVL(token, NIN):
         dvl = dvl_result.json()
 
     return dvl
+
+
+def fetch_DVL_latest_update_date(token, NIN):
+    headers = {
+        "Authorization": f"Bearer {token}",
+    }
+
+    dvl_url = settings.POCHITA_BASE_URL + f"dvl/last-updated-date/{NIN}/"
+
+    dvl_result = requests.get(dvl_url, headers=headers)
+    dvl_status_code = dvl_result.status_code
+    if dvl_status_code != 200:
+        return None
+    else:
+        return dvl_result.json()
 
 
 # def fetch_all_documents(NIN):
@@ -131,6 +177,40 @@ def fetch_documents(NIN: str, documents: list[str] = [], fetch_all: bool = False
         fetched_documents["DVL"] = dvl
 
     return fetched_documents
+
+
+def fetch_documents_latest_update_date(
+    NIN: str, documents: list[str] = [], fetch_all: bool = False
+):
+
+    try:
+        pochita_token_config = get_object_or_404(
+            CoreConfig, app="core", key="pochita_token"
+        )
+        token = pochita_token_config.value
+    except Http404:
+        print("Pochita token was not found.")
+        return Response(
+            {"message": "Something went wrong."},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+    fetched_documents_latest_update_date = {}
+    if fetch_all or ("NID" in documents):
+        nid = fetch_NID_latest_update_date(token, NIN)
+        if nid is not None:
+            fetched_documents_latest_update_date["NID"] = nid["updatedAt"]
+
+    if fetch_all or ("CTZ" in documents):
+        ctz = fetch_CTZ_latest_update_date(token, NIN)
+        if ctz is not None:
+            fetched_documents_latest_update_date["CTZ"] = ctz["updatedAt"]
+
+    if fetch_all or ("DVL" in documents):
+        dvl = fetch_DVL_latest_update_date(token, NIN)
+        if dvl is not None:
+            fetched_documents_latest_update_date["DVL"] = dvl["updatedAt"]
+
+    return fetched_documents_latest_update_date
 
 
 # This view is used to get all the documents of a user.
@@ -210,3 +290,39 @@ class CheckNINView(APIView):
                 },
                 status=status.HTTP_200_OK,
             )
+
+
+class LastUpdatedAtView(APIView):
+    # permission_classes = [AllowAny]
+
+    def get(self, request, NIN, *args, **kwargs):
+        user = request.user
+        NIN = user.username
+        print(request.headers)
+        print(request.META)
+        print(f"Got request for last updated at by {NIN}")
+
+        try:
+            last_updated_at = fetch_documents_latest_update_date(
+                NIN=NIN, fetch_all=True
+            )
+        except Exception as e:
+            print(e)
+            print("Couldn't fetch the documents latest update date")
+            return Response(
+                {"message": "Something went wrong."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        max_date = max(
+            [
+                datetime.datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%f%z")
+                for date in last_updated_at.values()
+            ]
+        )
+
+        return Response(
+            {
+                "NIN": user.username,
+                "last_updated_at": max_date,
+            }
+        )

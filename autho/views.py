@@ -184,8 +184,8 @@ class OTPAuthView(APIView):
 
     def post(self, request, *args, **kwargs):
         headers = request.headers
-        device_model = headers.get("Model", None)
-        device_os = headers.get("Os", None)
+        device_model = headers.get("Model", "Unknown")
+        device_os = headers.get("Os", "Unknown")
         # print(request["os"])
         serializer = OTPAuthSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
