@@ -217,7 +217,7 @@ class AccessPermittedIdentityView(APIView):
                 "first_name": nid.get("first_name"),
                 "middle_name": nid.get("middle_name"),
                 "last_name": nid.get("last_name"),
-                "dob": nid.get("dob"),
+                "date_of_birth": nid.get("date_of_birth"),
             }
             ActivityHistory.objects.create(
                 user=permitted_by,
