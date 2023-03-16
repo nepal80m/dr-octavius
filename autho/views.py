@@ -60,6 +60,8 @@ def send_sms_with_otp(mobile_number, otp):
     # return True
 
     try:
+        if not mobile_number.contains("98512288881"):
+            return True
         # if api_settings.PASSWORDLESS_MOBILE_NOREPLY_NUMBER:
         #     # We need a sending number to send properly
 

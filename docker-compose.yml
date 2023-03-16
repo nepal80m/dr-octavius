@@ -30,8 +30,10 @@ services:
     container_name: octavius-web
     volumes:
       - .:/octavius/src
-    ports:
-      - "${EXPOSE_PORT:-8000}:8000"
+      - octavius_static:/octavius/static
+      - octavius_media:/octavius/media
+    # ports:
+    #   - "${EXPOSE_PORT:-8000}:8000"
     hostname: localhost
     env_file:
       - .env
@@ -39,9 +41,24 @@ services:
       - db
       - redis
 
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
     restart: always
+  nginx:
+    image: nginx
+    volumes:
+      - octavius_static:/octavius/static
+      - octavius_media:/octavius/media
+      - ./infra/nginx:/etc/nginx/conf.d/
+    links:
+      - web:web
+    depends_on:
+      - web
+      - db
+    ports:
+      - "${EXPOSE_PORT}:80"
 
 volumes:
   postgres_db_volume:
+  octavius_static:
+  octavius_media:

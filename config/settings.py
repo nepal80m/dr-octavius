@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+import itertools
 import os
 from pathlib import Path
 from dotenv import load_dotenv
@@ -30,6 +30,14 @@ DEBUG = True
 TRUSTED_ORIGINS = os.environ.get("TRUSTED_ORIGINS").split("|")
 
 ALLOWED_HOSTS = TRUSTED_ORIGINS
+CSRF_TRUSTED_ORIGINS = list(
+    itertools.chain.from_iterable(
+        [
+            (f"http://{origin}", f"https://{origin}")
+            for origin in os.environ.get("CSRF_TRUSTED_ORIGINS").split("|")
+        ]
+    )
+)
 
 
 # Application definition
